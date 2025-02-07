@@ -66,3 +66,57 @@ Back in the global execution context, the returned value from `multiplyFn` (2262
 
 #### Step 7: Completion
 Once the entire code is executed, the global execution context is also popped out, and the call stack becomes empty.
+
+## How is Asynchronous Code Executed?
+
+### JavaScript Engine and Node.js
+The JavaScript engine cannot execute asynchronous code alone - it needs superpowers. This is where Node.js comes into the picture, providing the ability to interact with operating system functionalities.
+
+The JS engine gains these superpowers from Node.js through a library named Libuv—our superhero. Since the JS engine cannot directly access OS files, it relies on Libuv. Libuv communicates with the OS, performs necessary tasks, and returns responses to the JS engine, effectively handling work behind the scenes.
+
+### Code Execution Process
+
+1. **Synchronous Phase**
+   - Variables `let a` and `let b` are executed within the Global Execution Context (GEC) during the synchronous phase
+
+2. **API Call Handling**
+   - When encountering an API call, the V8 engine (while in GEC) recognizes it as asynchronous
+   - V8 engine signals Libuv to handle the API call
+   - Libuv registers the API call and its callback function in the event loop
+   - V8 engine continues executing remaining code without waiting
+
+3. **setTimeout and File Operations**
+   - Similar process occurs for setTimeout functions
+   - V8 engine identifies these as asynchronous operations
+   - File operations (read/write) follow the same pattern
+   - Libuv registers these operations and their callbacks in the event loop
+
+4. **Function Execution**
+   - For `let c = multiplyFn(a, b)`:
+     - JavaScript engine creates new function context
+     - Pushes context to call stack
+     - Handles parameters x and y
+     - Performs multiplication
+     - Returns result
+     - Pops function context from stack
+
+### Important Concepts
+
+- **Garbage Collection**: When function execution context is popped off, garbage collector may clear associated memory
+- **Program Completion**:
+  - console.log(c) executes
+  - Global execution context removes from call stack
+  - Call stack becomes empty
+  - JavaScript engine completes processing
+
+### Libuv's Role
+After main execution:
+- Takes over major tasks
+- Handles timer processing
+- Manages file system calls
+- Communicates with operating system
+- Performs background tasks
+- Manages asynchronous operations
+
+### Summary
+Node.js excels in handling asynchronous I/O operations through its non-blocking I/O model.
