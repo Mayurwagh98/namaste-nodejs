@@ -16,8 +16,11 @@ let b = 3223;
 // - 10000: Number of iterations
 // - 50: Key length in bytes
 // - "sha512": Hash digest algorithm
-crypto.pbkdf2Sync("password", "salt", 10000, 50, "sha512", () => {
-  console.log("password hashed successfully");
+crypto.pbkdf2Sync("password", "salt", 10000, 50, "sha512");
+console.log("password hashed successfully");
+
+crypto.pbkdf2("password", "salt", 10000, 50, "sha512", () => {
+  console.log("2nd password hashed successfully");
 });
 
 /**
